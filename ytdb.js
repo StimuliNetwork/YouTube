@@ -19,23 +19,22 @@
 
     function hideAds() {
         adSelectors.forEach(selector => {
-            const ads = document.querySelectorAll(selector);
-            ads.forEach(ad => {
+            document.querySelectorAll(selector).forEach(ad => {
                 ad.style.display = 'none';
             });
         });
     }
 
-    function clearConsole() {
-        console.clear();
-    }
+    hideAds();
 
-    function runOnClick() {
+    const observer = new MutationObserver(() => {
         hideAds();
-        clearConsole();
-    }
+    });
 
-    runOnClick();
+    observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+    });
 
-    window.addEventListener('click', runOnClick);
+    setInterval(hideAds, 2000);
 })();
