@@ -1,40 +1,29 @@
 (function() {
     'use strict';
 
-    const adSelectors = [
-        '.ad-class',
-        '[id^="ad-"]',
-        '[class*=" ad "]',
-        '[class*="-ad-"]',
-        '[class*="_ad_"]',
-        '.video-ads',
-        '.ytp-ad-overlay-container',
-        '.ad-zone',
-        '.textads',
-        '.banner-ads',
-        '.ad-unit',
-        'iframe[src*="doubleclick.net"]',
-        'iframe[src*="adservice.google.com"]'
-    ];
+    let refreshed = false;
 
-    function hideAds() {
-        adSelectors.forEach(selector => {
-            document.querySelectorAll(selector).forEach(ad => {
-                ad.style.display = 'none';
-            });
-        });
+    function checkForAd() {
+        const player = document.querySelector('.html5-video-player');
+        if (!player) return;
+
+        if (player.classList.contains('ad-showing')) {
+            if (!refreshed) {
+                refreshed = true;
+                location.reload();
+            }
+        } else {
+            refreshed = false;
+        }
     }
 
-    hideAds();
-
-    const observer = new MutationObserver(() => {
-        hideAds();
-    });
+    const observer = new MutationObserver(checkForAd);
 
     observer.observe(document.documentElement, {
-        childList: true,
-        subtree: true
+        attributes: true,
+        subtree: true,
+        attributeFilter: ['class']
     });
 
-    setInterval(hideAds, 2000);
+    setInterval(checkForAd, 1000);
 })();
